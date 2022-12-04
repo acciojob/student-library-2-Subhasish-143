@@ -41,8 +41,15 @@ public class TransactionService {
         Transaction transaction = transactions.get(transactions.size() - 1);
 
         //for the given transaction calculate the fine amount considering the book has been returned exactly when this function is called
-        int days = new Date().compareTo(transaction.getTransactionDate());
-        int fine = days > getMax_allowed_days ? (days * fine_per_day) : 0 ;
+        Date today = new Date();
+        long timeDiff = today.getTime() - transaction.getTransactionDate().getTime();
+        long dayDiff = (timeDiff/(1000 * 60 * 60 *24)) % 365;
+
+        int fine = 0;
+        if (dayDiff > getMax_allowed_days) {
+            int fineDays = (int) (getMax_allowed_days - dayDiff);
+            fine = -1 * fineDays * fine_per_day;
+        }
 
         //make the book available for other users
         Book book = transaction.getBook();
@@ -130,10 +137,13 @@ public class TransactionService {
 
         // book is booked
         book.get().setAvailable(false);
+        book.get().setCard(card.get());
         book.get().getTransactions().add(transaction);
 
         // add book to the list
-        card.get().getBooks().add(book.get());
+        List<Book> books = card.get().getBooks();
+        books.add(book.get());
+        card.get().setBooks(books);
 
         // add into repo
         cardRepository5.save(card.get());
