@@ -42,6 +42,12 @@ public class Transaction {
     @Enumerated(value = EnumType.STRING)
     private TransactionStatus transactionStatus;
 
+    public Transaction(int fineAmount, boolean isIssueOperation, TransactionStatus transactionStatus) {
+        this.fineAmount = fineAmount;
+        this.isIssueOperation = isIssueOperation;
+        this.transactionStatus = transactionStatus;
+    }
+
     @CreationTimestamp
     private Date transactionDate;
 }
