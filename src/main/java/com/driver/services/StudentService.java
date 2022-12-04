@@ -29,16 +29,17 @@ public class StudentService {
     }
 
     public void createStudent(Student student){
-        studentRepository4.save(student);
-    }
-
-    public void updateStudent(Student student){
         // card creation
         Card card = cardService4.createAndReturn(student);
 
         // update student with card
         student.setCard(card);
 
+        // save student in repo
+        studentRepository4.save(student);
+    }
+
+    public void updateStudent(Student student){
         // save in repo
         studentRepository4.updateStudentDetails(student);
     }

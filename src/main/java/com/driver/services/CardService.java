@@ -25,18 +25,23 @@ public class CardService {
     BookRepository bookRepository;
 
     public Card createAndReturn(Student student){
-        Card card = cardRepository3.save(student.getCard());
-        // this card formed after saving into memory of card repo
+        Card card = Card.builder()
+                .student(student)
+                .cardStatus(CardStatus.ACTIVATED)
+                .build();
+
+        // saving on repository
+        cardRepository3.save(card);
         return card;
     }
 
     public void deactivateCard(int student_id){
         // making all the books present in card available
-        Optional<Student> student = studentRepository.findById(student_id);
-        Card card = student.get().getCard();
-        for(Book book : card.getBooks()) {
-            bookRepository.findById(book.getId()).get().setAvailable(true);
-        }
+        Student student = studentRepository.findById(student_id).orElse(null);
+//        Card card = student.getCard();
+//        for(Book book : card.getBooks()) {
+//            bookRepository.findById(book.getId()).get().setAvailable(true);
+//        }
 
         // deleting card
         cardRepository3.deactivateCard(student_id, CardStatus.DEACTIVATED.toString());
