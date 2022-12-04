@@ -35,68 +35,6 @@ public class TransactionService {
     @Value("${books.fine.per_day}")
     public int fine_per_day;
 
-    public String issueBook(int cardId, int bookId) throws Exception {
-        //check whether bookId and cardId already exist
-        
-        //conditions required for successful transaction of issue book:
-        
-        //1. book is present and available
-        Optional<Book> book = bookRepository5.findById(bookId);
-
-            // present
-        boolean isBookPrsnt = book.isPresent();
-            // available
-        boolean isAvl = book.get().isAvailable();
-        
-        // If it fails: throw new Exception("Book is either unavailable or not present");
-        if (!isBookPrsnt || !isAvl) {
-            throw new Exception("Book is either unavailable or not present");
-        }
-        
-        //2. card is present and activated
-        Optional<Card> card = cardRepository5.findById(cardId);
-        
-            // present
-        boolean isPrst = card.isPresent();
-            // available
-        CardStatus isActive = card.get().getCardStatus();
-        
-        // If it fails: throw new Exception("Card is invalid");
-        if (!isPrst && isActive==CardStatus.DEACTIVATED) {
-            throw new Exception("Card is invalid");
-        }
-        //3. number of books issued against the card is strictly less than max_allowed_books
-        int numOfBook = card.get().getBooks().size();
-        
-        // If it fails: throw new Exception("Book limit has reached for this card");
-        if (numOfBook >= max_allowed_books) {
-            throw new Exception("Book limit has reached for this card");
-        }
-        
-        //If the transaction is successful, save the transaction to the list of transactions and return the id
-            // new transaction
-        Transaction transaction = new Transaction();
-        transaction.setBook(book.get());
-        transaction.setCard(card.get());
-        transaction.setTransactionStatus(TransactionStatus.SUCCESSFUL);
-        transaction.setIssueOperation(true);
-
-        transaction = transactionRepository5.save(transaction);
-
-        // book is booked
-        book.get().setAvailable(false);
-        book.get().getTransactions().add(transaction);
-
-        // add book to the list
-        card.get().getBooks().add(book.get());
-
-        // add into repo
-        cardRepository5.save(card.get());
-        bookRepository5.save(book.get());
-
-       return transaction.getTransactionId(); //return transactionId instead
-    }
-
     public Transaction returnBook(int cardId, int bookId) throws Exception{
 
         List<Transaction> transactions = transactionRepository5.find(cardId, bookId, TransactionStatus.SUCCESSFUL, true);
@@ -142,4 +80,66 @@ public class TransactionService {
         transactionRepository5.save(returnBookTransaction);
         return returnBookTransaction; //return the transaction after updating all details
     }
+    public String issueBook(int cardId, int bookId) throws Exception {
+        //check whether bookId and cardId already exist
+
+        //conditions required for successful transaction of issue book:
+
+        //1. book is present and available
+        Optional<Book> book = bookRepository5.findById(bookId);
+
+        // present
+        boolean isBookPrsnt = book.isPresent();
+        // available
+        boolean isAvl = book.get().isAvailable();
+
+        // If it fails: throw new Exception("Book is either unavailable or not present");
+        if (!isBookPrsnt || isAvl==false) {
+            throw new Exception("Book is either unavailable or not present");
+        }
+
+        //2. card is present and activated
+        Optional<Card> card = cardRepository5.findById(cardId);
+
+        // present
+        boolean isPrst = card.isPresent();
+        // available
+        CardStatus isActive = card.get().getCardStatus();
+
+        // If it fails: throw new Exception("Card is invalid");
+        if (!isPrst && isActive==CardStatus.DEACTIVATED) {
+            throw new Exception("Card is invalid");
+        }
+        //3. number of books issued against the card is strictly less than max_allowed_books
+        int numOfBook = card.get().getBooks().size();
+
+        // If it fails: throw new Exception("Book limit has reached for this card");
+        if (numOfBook >= max_allowed_books) {
+            throw new Exception("Book limit has reached for this card");
+        }
+
+        //If the transaction is successful, save the transaction to the list of transactions and return the id
+        // new transaction
+        Transaction transaction = new Transaction();
+        transaction.setBook(book.get());
+        transaction.setCard(card.get());
+        transaction.setTransactionStatus(TransactionStatus.SUCCESSFUL);
+        transaction.setIssueOperation(true);
+
+        transaction = transactionRepository5.save(transaction);
+
+        // book is booked
+        book.get().setAvailable(false);
+        book.get().getTransactions().add(transaction);
+
+        // add book to the list
+        card.get().getBooks().add(book.get());
+
+        // add into repo
+        cardRepository5.save(card.get());
+        bookRepository5.save(book.get());
+
+        return transaction.getTransactionId(); //return transactionId instead
+    }
+
 }
