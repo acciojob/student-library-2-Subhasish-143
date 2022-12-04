@@ -59,13 +59,13 @@ public class TransactionService {
         book.setAvailable(true);
         book.setCard(null);
 
-        // deleting the book present in card
-        for(int i=0;i<card.getBooks().size();i++) {
-            if (card.getBooks().get(i).getId() == book.getId()) {
-                card.getBooks().set(i,card.getBooks().get(card.getBooks().size()-1));
-                card.getBooks().remove(card.getBooks().size()-1);
-            }
-        }
+//         // deleting the book present in card
+//         for(int i=0;i<card.getBooks().size();i++) {
+//             if (card.getBooks().get(i).getId() == book.getId()) {
+//                 card.getBooks().set(i,card.getBooks().get(card.getBooks().size()-1));
+//                 card.getBooks().remove(card.getBooks().size()-1);
+//             }
+//         }
         //make a new transaction for return book which contains the fine amount as well
 
         Transaction returnBookTransaction  = Transaction.builder()
@@ -81,8 +81,8 @@ public class TransactionService {
         book.getTransactions().add(returnBookTransaction);
 
         // saving book and card
-        bookRepository5.save(book);
-        cardRepository5.save(card);
+        bookRepository5.updateBook(book);
+//         cardRepository5.save(card);
 
         transactionRepository5.save(returnBookTransaction);
         return returnBookTransaction; //return the transaction after updating all details
@@ -102,11 +102,11 @@ public class TransactionService {
         int numOfBook = card.getBooks().size();
 
         // If it fails: throw new Exception("Book is either unavailable or not present");
-        if (book!=null || bookIsAvl==false) {
+        if (book==null || bookIsAvl==false) {
             throw new Exception("Book is either unavailable or not present");
         }
         // If it fails: throw new Exception("Card is invalid");
-        else if (card!=null || isActive==CardStatus.DEACTIVATED) {
+        else if (card==null || isActive.equals(CardStatus.DEACTIVATED)) {
             throw new Exception("Card is invalid");
         }
         // If it fails: throw new Exception("Book limit has reached for this card");
