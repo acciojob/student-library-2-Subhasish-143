@@ -14,6 +14,7 @@ import java.util.Date;
 @Setter
 //@NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name = "Student")
 public class Student {
 
@@ -50,6 +51,14 @@ public class Student {
         this.name = name;
         this.age = age;
         this.country = country;
+    }
+
+    public Student(String emailId, String name, int age, String country, Card card) {
+        this.emailId = emailId;
+        this.name = name;
+        this.age = age;
+        this.country = country;
+        this.card = card;
     }
 
     @Override

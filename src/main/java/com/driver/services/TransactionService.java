@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -109,9 +110,11 @@ public class TransactionService {
         Book book = transaction.getBook();
         Card card = transaction.getCard();
 
+        // setting book available and card null
         book.setAvailable(true);
         book.setCard(null);
 
+        // deleting the book present in card
         for(int i=0;i<card.getBooks().size();i++) {
             if (card.getBooks().get(i).getId() == book.getId()) {
                 card.getBooks().set(i,card.getBooks().get(card.getBooks().size()-1));
@@ -120,11 +123,19 @@ public class TransactionService {
         }
         //make a new transaction for return book which contains the fine amount as well
 
-        Transaction returnBookTransaction  = transaction;
-        returnBookTransaction.setFineAmount(fine);
+        Transaction returnBookTransaction  = Transaction.builder()
+                .transactionId(UUID.randomUUID().toString())
+                .book(transaction.getBook())
+                .card(transaction.getCard())
+                .isIssueOperation(false)
+                .fineAmount(fine)
+                .transactionStatus(TransactionStatus.SUCCESSFUL)
+                .build();
 
-        book.getTransactions().set(book.getTransactions().size()-1,returnBookTransaction);
+        // add new transaction to list of transaction
+        book.getTransactions().add(returnBookTransaction);
 
+        // saving book and card
         bookRepository5.save(book);
         cardRepository5.save(card);
 

@@ -2,10 +2,7 @@ package com.driver.models;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -14,6 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 //@NoArgsConstructor
+@Builder
 @AllArgsConstructor
 @Table(name = "Book")
 public class Book {
@@ -52,6 +50,14 @@ public class Book {
         this.name = name;
         this.genre = genre;
         this.author = author;
+    }
+
+    public Book(String name, Genre genre, Author author, Card card, boolean available) {
+        this.name = name;
+        this.genre = genre;
+        this.author = author;
+        this.card = card;
+        this.available = available;
     }
 }
 

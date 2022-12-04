@@ -12,6 +12,7 @@ import java.util.List;
 @Setter
 //@NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name = "Author")
 public class Author {
 

@@ -29,26 +29,18 @@ public class BookService {
         bookRepository2.save(book);
     }
 
-    public List<Book> getBooks(String genre, boolean available, String author){
-        List<Book> books = new ArrayList<>();
-
-        if (genre==null || genre.equals("")) {
-            // author and available
-            books = bookRepository2.findBooksByAuthor(author,available);
-        }
-        else if (author==null || author.equals("")) {
-            // genre and available
-            books = bookRepository2.findBooksByGenre(genre, available);
-        }
-        else if ((genre==null || genre.equals("")) && (author==null || author.equals(""))){
-            // available
-            books = bookRepository2.findByAvailability(available);
-        }
-        else {
-            // genre , author and available
-            books = bookRepository2.findBooksByGenreAuthor(genre, author, available);
-        }
-
+    public List<Book> getBooksWhenGenreNull(String author,boolean available){
+        List<Book> books = bookRepository2.findBooksByAuthor(author,available);
         return books;
+    }
+    public List<Book> getBooksWhenAuthorNull(String genre, boolean available) {
+        List<Book> books = bookRepository2.findBooksByGenre(genre, available);
+        return books;
+    }
+    public List<Book> getBooksWhenNotAvailable(boolean available) {
+        return bookRepository2.findByAvailability(false);
+    }
+    public List<Book> getBooksWhenNoInputNull(String genre, boolean available, String author) {
+        return bookRepository2.findBooksByGenreAuthor(genre, author, available);
     }
 }
