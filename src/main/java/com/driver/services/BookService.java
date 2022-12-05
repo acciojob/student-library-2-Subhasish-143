@@ -23,7 +23,13 @@ public class BookService {
     public void createBook(Book book){
         // add book to the list of books of author
         Author author = book.getAuthor();
-        authorRepository.findById(author.getId()).get().getBooksWritten().add(book);
+        if (author!=null) {
+            List<Book> books = author.getBooksWritten();
+            books.add(book);
+            author.setBooksWritten(books);
+
+            authorRepository.save(author);
+        }
 
         // add book to book repo
         bookRepository2.save(book);
