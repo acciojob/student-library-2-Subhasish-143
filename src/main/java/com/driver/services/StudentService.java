@@ -24,8 +24,8 @@ public class StudentService {
     }
 
     public Student getDetailsById(int id){
-        Optional<Student> student = studentRepository4.findById(id);
-        return student.get();
+        Student student = studentRepository4.findById(id).get();
+        return student;
     }
 
     public void createStudent(Student student){
