@@ -36,13 +36,6 @@ public class CardService {
     }
 
     public void deactivateCard(int student_id){
-        // making all the books present in card available
-        Student student = studentRepository.findById(student_id).orElse(null);
-//        Card card = student.getCard();
-//        for(Book book : card.getBooks()) {
-//            bookRepository.findById(book.getId()).get().setAvailable(true);
-//        }
-
         // deleting card
         cardRepository3.deactivateCard(student_id, CardStatus.DEACTIVATED.toString());
     }
